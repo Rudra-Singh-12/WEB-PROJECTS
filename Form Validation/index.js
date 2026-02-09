@@ -1,12 +1,18 @@
-const form = document.getElementById("registration-form");
-const username = document.getElementById("username");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
-const confirmPassword = document.getElementById("confirmPassword");
+const form = document.getElementById("registration-form")
+const username = document.getElementById("username")
+const email = document.getElementById("email")
+const password = document.getElementById("password")
+const confirmPassword = document.getElementById("confirmPassword")
 
 form.addEventListener("submit", function (e) {
     e.preventDefault()
-    const isRequiredValid = checkRequired([username, email, password, confirmPassword])
+
+    const isRequiredValid = checkRequired([
+        username,
+        email,
+        password,
+        confirmPassword
+    ])
 
     let isFormValid = isRequiredValid
 
@@ -15,6 +21,21 @@ form.addEventListener("submit", function (e) {
         const isEmailValid = checkEmail(email)
         const isPasswordValid = checkLength(password, 6, 25)
         const isPasswordMatch = checkPasswordMatch(password, confirmPassword)
+
+        isFormValid =
+            isUsernameValid &&
+            isEmailValid &&
+            isPasswordValid &&
+            isPasswordMatch
+    }
+
+    if (isFormValid) {
+        alert("Registration successful")
+        form.reset()
+
+        document.querySelectorAll(".form-group").forEach(group => {
+            group.className = "form-group"
+        })
     }
 })
 
@@ -28,7 +49,9 @@ function checkRequired(inputArray) {
         } else {
             showSuccess(input)
         }
-    });
+    })
+
+    return isValid
 }
 
 function formatFieldName(input) {
@@ -38,9 +61,10 @@ function formatFieldName(input) {
 function showError(input, message) {
     const formGroup = input.parentElement
     formGroup.className = "form-group error"
-    const small = formGroup.querySelector('small')
+    const small = formGroup.querySelector("small")
     small.innerText = message
 }
+
 function showSuccess(input) {
     const formGroup = input.parentElement
     formGroup.className = "form-group success"
@@ -48,29 +72,39 @@ function showSuccess(input) {
 
 function checkLength(input, min, max) {
     if (input.value.length < min) {
-        showError(input, `${formatFieldName(input)}Must be atleast less than ${min} characters`)
+        showError(
+            input,
+            `${formatFieldName(input)} must be at least ${min} characters`
+        )
         return false
     } else if (input.value.length > max) {
-        showError(input, `${formatFieldName(input)}Must be atleast less than ${max} characters`)
+        showError(
+            input,
+            `${formatFieldName(input)} must be less than ${max} characters`
+        )
         return false
     }
+
     showSuccess(input)
     return true
 }
 
-function checkEmail(email){
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRegex.text(email.value.trim())){
+function checkEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (emailRegex.test(email.value.trim())) {
         showSuccess(email)
         return true
-    }else{
-        showError(input , "Email is not valid")
+    } else {
+        showError(email, "Email is not valid")
         return false
     }
 }
 
-function checkPasswordMatch(input1 , input2){
-    if (input1.value !== input2.value ){
-        showError(input2)
+function checkPasswordMatch(input1, input2) {
+    if (input1.value !== input2.value) {
+        showError(input2, "Passwords do not match")
+        return false
     }
+    return true
 }
